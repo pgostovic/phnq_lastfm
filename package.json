@@ -1,0 +1,22 @@
+{
+  "name"          : "phnq_lastfm",
+  "description"   : "Client for last.fm API",
+  "homepage"      : "https://github.com/pgostovic/phnq_lastfm",
+  "keywords"      : ["phnq", "last.fm", "client"],
+  "author"        : "Patrick Gostovic <pg@phnq.org>",
+  "repository"    : {"type": "git", "url": "git://github.com/pgostovic/phnq_lastfm.git"},
+  "main"          : "phnq_lastfm.js",
+  "version"       : "1.0.0",
+  "dependencies"  :
+  {
+    "mocha": "1.17.0"
+  },
+  "scripts"       :
+  {
+    "test": "mocha -R spec --ignore-leaks"
+  },
+  "engines"       :
+  {
+    "node": "0.10.x"
+  }
+}
