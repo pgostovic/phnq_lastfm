@@ -94,5 +94,27 @@ describe("phnq_lastfm", function()
 			});
 		});
 	});
+	
+	describe("artist tags", function()
+	{
+		it("should get the top tags for an artist", function(done)
+		{
+			var client = new LastfmClient(LAST_FM_API_KEY);
+			client.artistFind({mbid:MBID_PAINS_OF_BEING_PURE_AT_HEART}, function(err, artist)
+			{
+				assert.ifError(err);
+				
+				artist.getTopTags(function(err, topTags)
+				{
+					assert.ifError(err);
+					for(var i=0; i<topTags.length; i++)
+					{
+						assert.ok(!!topTags[i].name);
+					}
+					done();
+				});
+			});
+		});
+	});
 });
 

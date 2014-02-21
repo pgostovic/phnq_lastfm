@@ -31,14 +31,14 @@ module.exports = phnq_core.clazz(
 	artistSearch: function(q, fn)
 	{
 		var _this = this;
-		this.req("artist.search", {"artist":q, "limit": 10}, function(err, body)
+		this.req("artist.search", {"artist":q, "limit": 10}, function(err, respObj)
 		{
 			if(err)
 			{
 				return fn(err);
 			}
 			var artists = [];
-			_.each(body.results.artistmatches.artist, function(artistData)
+			_.each(respObj.results.artistmatches.artist, function(artistData)
 			{
 				artists.push(new Artist(artistData, _this));
 			});
@@ -61,6 +61,29 @@ module.exports = phnq_core.clazz(
 				return fn(err);
 			}
 			fn(null, new Artist(respObj.artist, _this));
+		});
+	},
+	
+	artistTopTags: function(arg, fn)
+	{
+		var _this = this;
+		var params = arg.mbid ? {mbid:arg.mbid} : {artist:arg, autocorrect:1}
+		if(this.username)
+		{
+			params.username = this.username;
+		}
+		this.req("artist.gettoptags", params, function(err, respObj)
+		{
+			if(err)
+			{
+				return fn(err);
+			}
+			var tags = [];
+			_.each(respObj.toptags.tag, function(tagData)
+			{
+				tags.push(new Tag(tagData, _this));
+			});
+			fn(null, tags);
 		});
 	}
 });
@@ -87,5 +110,28 @@ var Artist = phnq_core.clazz(
 			phnq_core.extend(_this, artistInfo);
 			fn(null, _this);
 		})
+	},
+	
+	getTopTags: function(fn)
+	{
+		if(this.topTags)
+		{
+			return fn(null, this.topTags);
+		}
+		var _this = this;
+		var arg = this.mbid ? {mbid:this.mbid} : this.name;
+		this.client.artistTopTags(arg, function(err, topTags)
+		{
+			fn(err, _this.topTags = topTags);
+		});
+	}
+});
+
+var Tag = phnq_core.clazz(
+{
+	init: function(tagData, client)
+	{
+		this.client = client;
+		phnq_core.extend(this, tagData);
 	}
 });
